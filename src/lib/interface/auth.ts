@@ -27,3 +27,20 @@ export interface ChangePasswordResult {
   success: boolean;
   message: string;
 }
+
+export interface SessionItem {
+  session_id: string;
+  device?: string;
+  ip_address?: string;
+  created_at?: string;
+  last_active?: string;
+  is_current?: boolean;
+  [key: string]: unknown;
+}
+
+export interface SessionsResponse {
+  success: boolean;
+  code: number;
+  message: string;
+  data: SessionItem[];
+}

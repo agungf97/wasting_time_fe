@@ -103,9 +103,9 @@ export function UserForm({
       };
 
       const action = isEdit
-        ? updateUserAction(initialData!.email, payload)
+        ? updateUserAction({ ...payload, email: initialData!.email })
         : createUserAction(payload);
-
+        
       const { data: result, message, error } = await action;
 
       if (error) {

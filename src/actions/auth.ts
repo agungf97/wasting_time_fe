@@ -5,6 +5,7 @@ import {
   ChangePasswordPayload,
   ChangePasswordResult,
   LoginResponse,
+  SessionsResponse,
 } from "@/lib/interface/auth";
 import { RegisterPayload } from "@/lib/interface/user";
 import { cookies } from "next/headers";
@@ -28,7 +29,7 @@ export async function loginAction(
   password: string,
   rememberMe: boolean = false,
 ) {
-  const { data, error, status } = await fetchAPI<LoginResponse>("/login", {
+  const { data, error } = await fetchAPI<LoginResponse>("/login", {
     method: "POST",
     body: JSON.stringify({ identifier, password, remember_me: rememberMe }),
   });
@@ -39,7 +40,6 @@ export async function loginAction(
   const name = data?.data?.user?.full_name;
   const phone_number = data?.data?.user?.phone_number;
   const email = data?.data?.user?.email;
-
   const username = data?.data?.user?.username;
 
   if (error || !token) {
@@ -57,28 +57,13 @@ export async function loginAction(
 
   const cookieStore = await cookies();
   cookieStore.set("token", token, { ...baseCookieOptions, httpOnly: true });
-  cookieStore.set("role", role ?? "", {
-    ...baseCookieOptions,
-    httpOnly: false,
-  });
-  cookieStore.set("name", name ?? "", {
-    ...baseCookieOptions,
-    httpOnly: false,
-  });
-  cookieStore.set("email", email ?? "", {
-    ...baseCookieOptions,
-    httpOnly: false,
-  });
-  cookieStore.set("username", username ?? "", {
-    ...baseCookieOptions,
-    httpOnly: false,
-  });
-  cookieStore.set("phone_number", phone_number ?? "", {
-    ...baseCookieOptions,
-    httpOnly: false,
-  });
+  cookieStore.set("role", role ?? "", { ...baseCookieOptions, httpOnly: false });
+  cookieStore.set("name", name ?? "", { ...baseCookieOptions, httpOnly: false });
+  cookieStore.set("email", email ?? "", { ...baseCookieOptions, httpOnly: false });
+  cookieStore.set("username", username ?? "", { ...baseCookieOptions, httpOnly: false });
+  cookieStore.set("phone_number", phone_number ?? "", { ...baseCookieOptions, httpOnly: false });
 
-  return { success: true, status };
+  redirect("/");
 }
 
 const SESSION_COOKIE_NAMES = [
@@ -88,15 +73,13 @@ const SESSION_COOKIE_NAMES = [
   "email",
   "username",
   "phone_number",
+  "user",
 ];
 
-export async function logoutAction() {
+export async function logoutAction(allDevices: boolean = false) {
   const { error } = await fetchAPI<{ success: boolean; message: string }>(
-    "/logout",
-    {
-      method: "POST",
-      withAuth: true,
-    },
+    `/auth/logout?all_devices=${allDevices}`,
+    { method: "POST", withAuth: true },
   );
 
   if (error) {
@@ -112,12 +95,8 @@ export async function changePasswordAction(
   payload: ChangePasswordPayload,
 ): Promise<ChangePasswordResult> {
   const { error } = await fetchAPI<{ success: boolean; message: string }>(
-    "/change-password",
-    {
-      method: "POST",
-      withAuth: true,
-      body: JSON.stringify(payload),
-    },
+    "/auth/change-password",
+    { method: "POST", withAuth: true, body: JSON.stringify(payload) },
   );
 
   if (error) {
@@ -127,7 +106,7 @@ export async function changePasswordAction(
   const cookieStore = await cookies();
   SESSION_COOKIE_NAMES.forEach((name) => cookieStore.delete(name));
 
-  redirect("/");
+  return { success: true, message: "Password berhasil diubah, silakan login kembali." };
 }
 
 export async function forgotPasswordAction(email: string) {
@@ -179,5 +158,55 @@ export async function resetPasswordAction(
     return { success: false, message: error };
   }
 
+  return { success: true, message: data?.message };
+}
+
+
+export async function getActiveSessionsAction() {
+  const { data, error } = await fetchAPI<SessionsResponse>(
+    "/auth/sessions",
+    { withAuth: true },
+  );
+
+  if (error) return { error };
+  return { data: data?.data ?? [] };
+}
+
+export async function logoutSessionByIdAction(sessionId: string) {
+  const { data, error } = await fetchAPI<{
+    success: boolean;
+    message: string;
+  }>(`/auth/sessions/${encodeURIComponent(sessionId)}`, {
+    method: "DELETE",
+    withAuth: true,
+  });
+
+  if (error) return { error };
+  return { success: true, message: data?.message };
+}
+
+export async function verifyEmailAction(token: string) {
+  const { data, error } = await fetchAPI<{
+    success: boolean;
+    message: string;
+  }>("/verify-email", {
+    method: "POST",
+    body: JSON.stringify({ token }),
+  });
+
+  if (error) return { success: false, message: error };
+  return { success: true, message: data?.message };
+}
+
+export async function resendVerificationAction(email: string) {
+  const { data, error } = await fetchAPI<{
+    success: boolean;
+    message: string;
+  }>("/resend-verification", {
+    method: "POST",
+    body: JSON.stringify({ email }),
+  });
+
+  if (error) return { success: false, message: error };
   return { success: true, message: data?.message };
 }

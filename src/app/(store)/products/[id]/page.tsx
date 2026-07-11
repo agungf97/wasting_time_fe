@@ -2,7 +2,6 @@ import Image from "next/image";
 import ProductInteraction from "./components/product-interaction";
 import { ProductType } from "@/hooks/use-store";
 
-// TEMPORARY
 const product: ProductType = {
   id: 1,
   name: "Adidas CoreFit T-Shirt",
@@ -25,8 +24,6 @@ export const generateMetadata = async ({
 }: {
   params: { id: string };
 }) => {
-  // TODO:get the product from db
-  // TEMPORARY
   return {
     title: product.name,
     describe: product.description,

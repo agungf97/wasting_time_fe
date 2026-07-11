@@ -67,7 +67,6 @@ const CartPage = () => {
         <div className="w-full lg:w-7/12 shadow-lg border border-gray-100 p-8 rounded-lg flex flex-col gap-4">
           {activeStep === 1 ? (
             cart.map((item) => (
-              // SINGLE CART ITEM
               <div
                 className="flex items-center justify-between border p-4 rounded-lg"
                 key={item.id + item.selectedSize + item.selectedColor}

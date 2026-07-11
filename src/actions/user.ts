@@ -5,6 +5,7 @@ import {
   CreateUserPayload,
   RoleItem,
   UpdateUserPayload,
+  Users,
   UsersResponse,
 } from "@/lib/interface/user";
 
@@ -58,15 +59,25 @@ export async function getUsersAction(search?: string) {
   return { data: users };
 }
 
-export async function updateUserAction(
-  identifier: string,
-  payload: UpdateUserPayload,
-) {
+export async function getUserDetailAction(id: string | number) {
+  const { data, error } = await fetchAPI<{
+    success: boolean;
+    message: string;
+    data: Users;
+  }>(`/user/detail?id=${encodeURIComponent(String(id))}`, {
+    withAuth: true,
+  });
+
+  if (error) return { error };
+  return { data: data?.data };
+}
+
+export async function updateUserAction(payload: UpdateUserPayload) {
   const { data, error } = await fetchAPI<{
     success: boolean;
     message: string;
     data: UpdateUserPayload;
-  }>(`/user/update?identifier=${encodeURIComponent(identifier)}`, {
+  }>("/user/update", {
     method: "PUT",
     withAuth: true,
     body: JSON.stringify(payload),
@@ -76,11 +87,11 @@ export async function updateUserAction(
   return { success: true, message: data?.message, data: data?.data };
 }
 
-export async function deleteUserAction(identifier: string) {
+export async function deleteUserAction(email: string) {
   const { data, error } = await fetchAPI<{
     success: boolean;
     message: string;
-  }>(`/user/delete?identifier=${encodeURIComponent(identifier)}`, {
+  }>(`/user/delete?email=${encodeURIComponent(email)}`, {
     method: "DELETE",
     withAuth: true,
   });

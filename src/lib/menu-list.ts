@@ -24,11 +24,15 @@ type Group = {
   menus: Menu[];
 };
 
+const INTERNAL_ROLES = ["ADMIN", "OWNER", "STAFF"];
+
 export function useMenuList(pathname: string, role?: string): Group[] {
+  const isInternal = !!role && INTERNAL_ROLES.includes(role);
+
   return [
     {
       groupLabel: "",
-      show: role === "ADMIN",
+      show: isInternal,
       menus: [
         {
           href: "/dashboard",
@@ -41,7 +45,7 @@ export function useMenuList(pathname: string, role?: string): Group[] {
     },
     {
       groupLabel: "Data Master",
-      show: role === "ADMIN",
+      show: isInternal,
       menus: [
         {
           href: "/user",

@@ -13,6 +13,8 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import Image from "next/image";
 import { loginAction } from "@/actions/auth";
+import Link from "next/link";
+import { Eye, EyeOff } from "lucide-react";
 
 export function LoginForm({
   className,
@@ -20,6 +22,7 @@ export function LoginForm({
 }: React.ComponentProps<"div">) {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -78,21 +81,36 @@ export function LoginForm({
               <Field>
                 <div className="flex items-center">
                   <FieldLabel htmlFor="password">Password</FieldLabel>
-                  <a
-                    href="#"
+                  <Link
+                    href="/reset-password"
                     className="ml-auto text-xs underline-offset-2 hover:underline"
                   >
                     Lupa password?
-                  </a>
+                  </Link>
                 </div>
-                <Input
-                  id="password"
-                  name="password"
-                  placeholder="••••••••"
-                  type="password"
-                  autoComplete="current-password"
-                  required
-                />
+                <div className="relative">
+                  <Input
+                    id="password"
+                    name="password"
+                    placeholder="*********"
+                    type={showPassword ? "text" : "password"}
+                    autoComplete="current-password"
+                    required
+                  />
+                  <Button
+                    type="button"
+                    variant="eye"
+                    tabIndex={-1}
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-2 top-1/2 -translate-y-1/2"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4 text-gray-500" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-gray-500" />
+                    )}
+                  </Button>
+                </div>
               </Field>
 
               <Field>
@@ -140,13 +158,6 @@ export function LoginForm({
           </div>
         </CardContent>
       </Card>
-
-      {/* <FieldDescription className="px-6 text-center">
-        Dengan login, kamu setuju dengan{" "}
-        <a href="/terms" className="underline underline-offset-4">Terms of Service</a>{" "}
-        dan{" "}
-        <a href="/privacy" className="underline underline-offset-4">Privacy Policy</a>.
-      </FieldDescription> */}
     </div>
   );
 }

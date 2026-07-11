@@ -1,6 +1,7 @@
 "use client";
 
-import { LogOut } from "lucide-react";
+import Link from "next/link";
+import { LogOut, Settings } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -20,8 +21,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChangePasswordForm } from "@/components/form/users/change-password";
-import { logoutWithPushCleanup } from "@/lib/logout-with-push";
+import { useRouter } from "next/navigation";
+import { logoutAction } from "@/actions/auth";
+import { notifyAuthChanged } from "@/hooks/use-user";
 
 interface UserNavProps {
   name?: string;
@@ -30,6 +32,15 @@ interface UserNavProps {
 
 export function UserNav({ name, email }: UserNavProps) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    setDropdownOpen(false);
+    await logoutAction();
+    notifyAuthChanged();
+    router.push("/login");
+    router.refresh();
+  };
 
   const initials = name
     ? name
@@ -74,15 +85,13 @@ export function UserNav({ name, email }: UserNavProps) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem
-            className="p-0 cursor-pointer"
-            onSelect={(e) => {
-              e.preventDefault();
-            }}
-          >
-            <ChangePasswordForm />
+          <DropdownMenuItem asChild className="cursor-pointer">
+            <Link href="/settings" onClick={() => setDropdownOpen(false)}>
+              <Settings className="w-4 h-4 mr-3 text-muted-foreground" />
+              Pengaturan Akun
+            </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => logoutWithPushCleanup()} className="cursor-pointer">
+          <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
             <LogOut className="w-4 h-4 mr-3 text-muted-foreground" />
             Sign out
           </DropdownMenuItem>

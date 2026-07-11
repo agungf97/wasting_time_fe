@@ -2,7 +2,7 @@
 
 import { ShoppingCart } from "lucide-react";
 import Link from "next/link";
-import { Button } from "../ui/button";
+import { Button } from "./ui/button";
 import useCartStore from "@/hooks/use-store";
 
 const ShoppingCartIcon = () => {

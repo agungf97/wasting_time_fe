@@ -4,7 +4,6 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
-import { NotificationProvider } from "@/lib/context/notification-context";
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -66,10 +65,8 @@ export default function RootLayout({
       <body className={inter.className} suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <TooltipProvider>
-              <NotificationProvider>
-                {children}
-                <Toaster richColors position="top-center" />
-            </NotificationProvider>
+              {children}
+              <Toaster richColors position="top-center" />
           </TooltipProvider>
         </ThemeProvider>
       </body>

@@ -2,8 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { ModeToggle } from "@/components/mode-toggle";
 import { Button } from "@/components/ui/button";
-import { ForgotPasswordForm } from "@/components/form/users/forgot-password-form";
-import { ResetPasswordForm } from "@/components/form/users/reset-password-form";
+import { ForgotPasswordForm } from "@/components/form/auth/forgot-password-form";
+import { ResetPasswordForm } from "@/components/form/auth/reset-password-form";
 import { validateTokenAction } from "@/actions/auth";
 import { AlertTriangle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -75,11 +75,6 @@ export default async function ResetPasswordPage({
           </Link>
           <nav className="ml-auto flex items-center gap-2">
             <ModeToggle />
-            <Link href="/login">
-              <Button variant="outline" className="rounded-full cursor-pointer">
-                Login
-              </Button>
-            </Link>
           </nav>
         </div>
       </header>

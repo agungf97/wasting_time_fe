@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { registerAction } from "@/actions/auth";
 import { useState } from "react";
 import Image from "next/image";
+import { Eye, EyeOff } from "lucide-react";
 
 export function RegisterForm({
   className,
@@ -20,6 +21,8 @@ export function RegisterForm({
 }: React.ComponentProps<"div">) {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -53,7 +56,7 @@ export function RegisterForm({
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card className="overflow-hidden p-0">
+      <Card className="overflow-hidden p-0 w-full">
         <CardContent className="grid p-0 md:grid-cols-2">
           <form className="p-6 md:p-8" onSubmit={handleSubmit}>
             <FieldGroup>
@@ -82,53 +85,86 @@ export function RegisterForm({
                 />
               </Field>
 
-              <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  required
-                />
-              </Field>
+              <div className="grid grid-cols-2 gap-4">
+                <Field>
+                  <FieldLabel htmlFor="email">Email</FieldLabel>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    placeholder="m@example.com"
+                    required
+                  />
+                </Field>
 
-              <Field>
-                <FieldLabel htmlFor="phone_number">No. Handphone</FieldLabel>
-                <Input
-                  id="phone_number"
-                  name="phone_number"
-                  type="tel"
-                  placeholder="081234567890"
-                  required
-                />
-              </Field>
+                <Field>
+                  <FieldLabel htmlFor="phone_number">No. Handphone</FieldLabel>
+                  <Input
+                    id="phone_number"
+                    name="phone_number"
+                    type="tel"
+                    placeholder="081234567890"
+                    required
+                  />
+                </Field>
+
+              </div>
 
               <Field>
                 <div className="grid grid-cols-2 gap-4">
                   <Field>
                     <FieldLabel htmlFor="password">Password</FieldLabel>
-                    <Input
-                      id="password"
-                      name="password"
-                      placeholder="••••••••"
-                      type="password"
-                      autoComplete="new-password"
-                      required
-                    />
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        name="password"
+                        placeholder="*********"
+                        type={showPassword ? "text" : "password"}
+                        autoComplete="new-password"
+                        required
+                      />
+                      <Button
+                        type="button"
+                        variant="eye"
+                        tabIndex={-1}
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-2 top-1/2 -translate-y-1/2"
+                      >
+                        {showPassword ? (
+                          <EyeOff className="h-4 w-4 text-gray-500" />
+                        ) : (
+                          <Eye className="h-4 w-4 text-gray-500" />
+                        )}
+                      </Button>
+                    </div>
                   </Field>
                   <Field>
                     <FieldLabel htmlFor="confirm_password">
                       Konfirmasi Password
                     </FieldLabel>
-                    <Input
-                      id="confirm_password"
-                      name="confirm_password"
-                      placeholder="••••••••"
-                      type="password"
-                      autoComplete="new-password"
-                      required
-                    />
+                    <div className="relative">
+                      <Input
+                        id="confirm_password"
+                        name="confirm_password"
+                        placeholder="*********"
+                        type={showConfirmPassword ? "text" : "password"}
+                        autoComplete="new-password"
+                        required
+                      />
+                      <Button
+                        type="button"
+                        variant="eye"
+                        tabIndex={-1}
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        className="absolute right-2 top-1/2 -translate-y-1/2"
+                      >
+                        {showConfirmPassword ? (
+                          <EyeOff className="h-4 w-4 text-gray-500" />
+                        ) : (
+                          <Eye className="h-4 w-4 text-gray-500" />
+                        )}
+                      </Button>
+                    </div>
                   </Field>
                 </div>
                 <FieldDescription>Minimal 8 karakter.</FieldDescription>
@@ -167,13 +203,6 @@ export function RegisterForm({
           </div>
         </CardContent>
       </Card>
-
-      <FieldDescription className="px-6 text-center">
-        Dengan mendaftar, kamu setuju dengan{" "}
-        <a href="/terms" className="underline underline-offset-4">Terms of Service</a>{" "}
-        dan{" "}
-        <a href="/privacy" className="underline underline-offset-4">Privacy Policy</a>.
-      </FieldDescription>
     </div>
   );
 }

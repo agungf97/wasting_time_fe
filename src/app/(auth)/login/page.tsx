@@ -1,8 +1,7 @@
 import { ModeToggle } from "@/components/mode-toggle";
 import Link from "next/link";
 import Image from "next/image";
-import { LoginForm } from "@/components/form/users/login-form";
-import { Button } from "@/components/ui/button";
+import { LoginForm } from "@/components/form/auth/login-form";
 
 export default async function LoginPage() {
 

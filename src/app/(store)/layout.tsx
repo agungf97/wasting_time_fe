@@ -1,5 +1,5 @@
-import Footer from "@/components/customer/footer";
-import Header from "@/components/customer/header";
+import Footer from "@/components/footer";
+import { Header } from "@/components/header";
 
 export default async function StoreLayout({
   children,
