@@ -1,26 +1,19 @@
-import AppSidebar from "@/components/admin/app-sidebar";
-import Navbar from "@/components/admin/navbar";
-import { SidebarProvider } from "@/components/ui/sidebar";
 import { cookies } from "next/headers";
+import AdminPanelLayout from "@/components/admin-panel/admin-panel-layout";
+// import { PushNotificationInitializer } from "@/components/push-notification-initializer";
 
-export default async function AdminLayout({
+export default async function DashboardLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
+  const cookieStore = await cookies();
+  const role = cookieStore.get("role")?.value;
 
-  const cookieStore = await cookies()
-  const defaultOpen = cookieStore.get("sidebar_state")?.value === "true"
-  
   return (
-    <SidebarProvider defaultOpen={defaultOpen}>
-        <AppSidebar />
-        <main className="w-full">
-            <Navbar />
-            <div className="p-4">
-                {children}
-            </div>
-        </main>
-    </SidebarProvider>
+    <AdminPanelLayout role={role}>
+      {/* <PushNotificationInitializer /> */}
+      {children}
+    </AdminPanelLayout>
   );
 }

@@ -3,11 +3,10 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "../ui/button";
-import { ModeToggle } from "../theme/mode-toggle";
-import { NavUser } from "../admin/nav-user";
 import ShoppingCartIcon from "./shopping-cart-icon";
+import { ModeToggle } from "../mode-toggle";
+import { UserNav } from "../admin-panel/user-nav";
 import { useUser } from "@/hooks/use-user";
-import { logoutAction } from "@/actions/auth";
 
 const DASHBOARD_ROLES = ["Owner", "Admin", "Staff"];
 
@@ -35,7 +34,7 @@ const Header = () => {
         <ShoppingCartIcon />
         <ModeToggle />
         {user ? (
-          <NavUser user={user} onLogout={logoutAction} />
+          <UserNav name={user.full_name} email={user.email} />
         ) : (
           <Link href="/login">
             <Button variant="outline" className="rounded-full cursor-pointer">Login</Button>

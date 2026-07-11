@@ -1,7 +1,5 @@
 import { cookies } from "next/headers";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-
 interface FetchOptions extends RequestInit {
   withAuth?: boolean;
 }
@@ -12,8 +10,10 @@ export async function fetchAPI<T>(
 ): Promise<{ data?: T; error?: string; status?: number }> {
   const { withAuth = false, headers = {}, ...rest } = options;
 
+  const isFormData = rest.body instanceof FormData;
+
   const reqHeaders: Record<string, string> = {
-    "Content-Type": "application/json",
+    ...(isFormData ? {} : { "Content-Type": "application/json" }),
     ...(headers as Record<string, string>),
   };
 
@@ -26,7 +26,7 @@ export async function fetchAPI<T>(
   }
 
   try {
-    const res = await fetch(`${BASE_URL}${endpoint}`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}${endpoint}`, {
       headers: reqHeaders,
       ...rest,
     });

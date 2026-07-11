@@ -1,15 +1,9 @@
 "use client";
 
+import { Users } from "@/lib/interface/user";
 import { useState } from "react";
 
-interface User {
-  id: number;
-  full_name: string;
-  email: string;
-  role: string;
-}
-
-function readUserCookie(): User | null {
+function readUserCookie(): Users | null {
   if (typeof window === "undefined") return null;
 
   const match = document.cookie
@@ -27,6 +21,6 @@ function readUserCookie(): User | null {
 }
 
 export function useUser() {
-  const [user] = useState<User | null>(readUserCookie);
+  const [user] = useState<Users | null>(readUserCookie);
   return user;
 }

@@ -1,7 +1,5 @@
 "use client";
 
-import useCartStore from "@/hooks/use-cart-store";
-import { ProductType } from "@/lib/interface";
 import { ShoppingCart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -22,6 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import useCartStore, { ProductType } from "@/hooks/use-store";
 
 const ProductCard = ({ product }: { product: ProductType }) => {
   const [productTypes, setProductTypes] = useState({

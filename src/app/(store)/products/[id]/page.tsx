@@ -1,6 +1,6 @@
-import { ProductType } from "@/lib/interface";
 import Image from "next/image";
 import ProductInteraction from "./components/product-interaction";
+import { ProductType } from "@/hooks/use-store";
 
 // TEMPORARY
 const product: ProductType = {

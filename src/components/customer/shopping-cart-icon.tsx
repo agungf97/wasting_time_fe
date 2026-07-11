@@ -1,9 +1,9 @@
 "use client";
 
-import useCartStore from "@/hooks/use-cart-store";
 import { ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
+import useCartStore from "@/hooks/use-store";
 
 const ShoppingCartIcon = () => {
   const { cart, hasHydrated } = useCartStore();

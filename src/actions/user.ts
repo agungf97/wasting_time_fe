@@ -1,112 +1,90 @@
 "use server";
 
-import { fetchAPI, buildQuery } from "@/lib/api";
+import { fetchAPI } from "@/lib/api";
 import {
-  User,
-  UserDetail,
   CreateUserPayload,
+  RoleItem,
   UpdateUserPayload,
-  GetUsersParams,
-  PaginatedResponse,
-} from "@/lib/types";
-import { revalidatePath } from "next/cache";
-
-export async function getUsersAction(params: GetUsersParams = {}) {
-  const query = buildQuery({
-    page: params.page ?? 1,
-    limit: params.limit ?? 10,
-    ...(params.search && { search: params.search }),
-    ...(params.role && { role: params.role }),
-    ...(params.id && { id: params.id }),
-  });
-
-  const { data, error } = await fetchAPI<PaginatedResponse<User>>(
-    `/user${query}`,
-    { withAuth: true },
-  );
-
-  if (error || !data) {
-    return { error: error || "Gagal mengambil data user" };
-  }
-
-  return { data };
-}
-
-export async function getUserDetailAction(id: number) {
-  const { data, error } = await fetchAPI<UserDetail>(`/user/detail?id=${id}`, {
-    withAuth: true,
-  });
-
-  if (error || !data) {
-    return { error: error || "Gagal mengambil detail user" };
-  }
-
-  return { data };
-}
+  UsersResponse,
+} from "@/lib/interface/user";
 
 export async function createUserAction(payload: CreateUserPayload) {
-  const { data, error } = await fetchAPI<User>("/user", {
+  const { data, error } = await fetchAPI<{
+    success: boolean;
+    message: string;
+    data: CreateUserPayload;
+  }>("/user", {
     method: "POST",
-    body: JSON.stringify(payload),
     withAuth: true,
+    body: JSON.stringify(payload),
   });
 
   if (error) {
     return { error };
   }
 
-  revalidatePath("/table-users");
-  return { data };
+  return { success: true, message: data?.message, data: data?.data };
+}
+
+export async function getUserFormOptionsAction() {
+  const [roleRes] = await Promise.all([
+    fetchAPI<{ data: RoleItem[] }>("/role", { withAuth: true }),
+  ]);
+
+  return {
+    roleOptions: (roleRes.data?.data ?? [])
+      .filter((r) => r.role_name.toLowerCase() !== "customer")
+      .map((r) => ({
+        id: r.role_name,
+        label: r.role_name,
+      })),
+  };
+}
+
+export async function getUsersAction(search?: string) {
+  const params = new URLSearchParams({ page: "1", limit: "1000" });
+  if (search?.trim()) params.set("search", search.trim());
+
+  const { data, error } = await fetchAPI<UsersResponse>(
+    `/user?${params.toString()}`,
+    { withAuth: true },
+  );
+  if (error) return { error };
+
+  const users = (data?.data ?? []).filter(
+    (u) => u.role.toLowerCase() !== "customer",
+  );
+
+  return { data: users };
 }
 
 export async function updateUserAction(
-  email: string,
+  identifier: string,
   payload: UpdateUserPayload,
 ) {
-  const { data, error } = await fetchAPI<User>(
-    `/user/update?email=${encodeURIComponent(email)}`,
-    {
-      method: "PUT",
-      body: JSON.stringify(payload),
-      withAuth: true,
-    },
-  );
+  const { data, error } = await fetchAPI<{
+    success: boolean;
+    message: string;
+    data: UpdateUserPayload;
+  }>(`/user/update?identifier=${encodeURIComponent(identifier)}`, {
+    method: "PUT",
+    withAuth: true,
+    body: JSON.stringify(payload),
+  });
 
-  if (error) {
-    return { error };
-  }
-
-  revalidatePath("/table-users");
-  return { data };
+  if (error) return { error };
+  return { success: true, message: data?.message, data: data?.data };
 }
 
-export async function deleteUserAction(email: string) {
-  const { error } = await fetchAPI(
-    `/user/delete?email=${encodeURIComponent(email)}`,
-    {
-      method: "DELETE",
-      withAuth: true,
-    },
-  );
+export async function deleteUserAction(identifier: string) {
+  const { data, error } = await fetchAPI<{
+    success: boolean;
+    message: string;
+  }>(`/user/delete?identifier=${encodeURIComponent(identifier)}`, {
+    method: "DELETE",
+    withAuth: true,
+  });
 
-  if (error) {
-    return { error };
-  }
-
-  revalidatePath("/table-users");
-  return { success: true };
-}
-
-export async function deleteMultipleUsersAction(emails: string[]) {
-  const results = await Promise.all(
-    emails.map((email) => deleteUserAction(email)),
-  );
-
-  const failed = results.filter((r) => r.error);
-  if (failed.length > 0) {
-    return { error: `${failed.length} user gagal dihapus` };
-  }
-
-  revalidatePath("/table-users");
-  return { success: true };
+  if (error) return { error };
+  return { success: true, message: data?.message };
 }

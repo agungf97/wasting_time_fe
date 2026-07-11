@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { ProductsType } from "@/lib/interface";
 import { Button } from "@/components/ui/button";
 import Filter from "./filter";
 import ProductCard from "./ProductCard";
+import { ProductsType } from "@/hooks/use-store";
 
 // TEMPORARY
 const products: ProductsType = [
