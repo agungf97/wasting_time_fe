@@ -61,6 +61,11 @@ export function Header({ variant = "public" }: HeaderProps) {
               <Link href="/dashboard">Dashboard</Link>
             </Button>
           )}
+          {isAdmin && user && DASHBOARD_ROLES.includes(user.role) && (
+            <Button asChild variant="outline" className="rounded-full cursor-pointer">
+              <Link href="/">Market</Link>
+            </Button>
+          )}
           {!isAdmin && <ShoppingCartIcon />}
           <ModeToggle />
           {user ? (

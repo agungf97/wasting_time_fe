@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { useState, useMemo, useEffect, useRef } from "react";
-import { SquarePen, Search, Trash2, XIcon } from "lucide-react";
+import { Eye, Search, Trash2, XIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TableHeadFilter } from "@/components/table-head-filter";
@@ -18,6 +18,7 @@ import { deleteUserAction, getUsersAction } from "@/actions/user";
 import { toast } from "sonner";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { useDebounce } from "@/hooks/use-debounce";
+import { useRouter } from "next/navigation";
 
 interface UsersTableProps {
   initialData: Users[];
@@ -31,12 +32,11 @@ export default function UsersTable({ initialData }: UsersTableProps) {
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
-    const [editingUser, setEditingUser] = useState<Users | null>(null);
-    const [editOpen, setEditOpen] = useState(false);
     const [deletingUser, setDeletingUser] = useState<Users | null>(null);
     const [deleteOpen, setDeleteOpen] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [deleteError, setDeleteError] = useState("");
+    const router = useRouter();
 
     const [sortConfig, setSortConfig] = useState<{
         field: keyof Users | null;
@@ -187,19 +187,6 @@ export default function UsersTable({ initialData }: UsersTableProps) {
                         Reset Filter
                     </Button>
                     <UserForm onSuccess={() => fetchUsers(debouncedSearch)} />
-
-                    {editingUser && (
-                        <UserForm
-                            mode="edit"
-                            initialData={editingUser}
-                            open={editOpen}
-                            onOpenChange={(val) => {
-                                setEditOpen(val);
-                                if (!val) setEditingUser(null);
-                            }}
-                            onSuccess={() => fetchUsers(debouncedSearch)}
-                        />
-                    )}
                 </div>
                 <AlertDialog open={deleteOpen} onOpenChange={(val) => {
                     setDeleteOpen(val);
@@ -365,16 +352,13 @@ export default function UsersTable({ initialData }: UsersTableProps) {
                                         }
                                     </TableCell>
                                     <TableCell>
-                                        <div className="flex items-center gap-1">
+                                        <div className="flex items-center gap-2">
                                             <Button
-                                                variant="link"
-                                                onClick={() => {
-                                                    setEditingUser(user);
-                                                    setEditOpen(true);
-                                                }}
-                                                className="border flex cursor-pointer items-center justify-center rounded-sm p-2 transition-colors bg-cyan-500 hover:bg-cyan-600"
+                                                variant="eye"
+                                                onClick={() => router.push(`/user/${encodeURIComponent(user.id)}`)}
+                                                className="text-primary underline-offset-4 hover:underline cursor-pointer font-medium border-2 shadow"
                                             >
-                                                <SquarePen className="w-4 h-4 text-white" />
+                                                <Eye className="w-4 h-4" />
                                             </Button>
                                             <Button
                                                 variant="link"
@@ -383,8 +367,8 @@ export default function UsersTable({ initialData }: UsersTableProps) {
                                                     setDeleteError("");
                                                     setDeleteOpen(true);
                                                 }}
-                                                className="border flex cursor-pointer items-center justify-center rounded-sm p-2 transition-colors bg-red-500 hover:bg-red-600"
-                                                >
+                                                className="border flex cursor-pointer items-center justify-center rounded-sm bg-red-500 p-2 transition-colors hover:bg-red-600"
+                                            >
                                                 <Trash2 className="w-4 h-4 text-white" />
                                             </Button>
                                         </div>

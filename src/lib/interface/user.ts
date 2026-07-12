@@ -6,6 +6,16 @@ export interface RegisterPayload {
 }
 
 
+export interface UserAddress {
+  address_line: string;
+  city: string;
+  province: string;
+  country: string;
+  postal_code: string;
+  is_default: boolean;
+}
+
+
 export interface Users {
   id: number;
   full_name: string;
@@ -16,10 +26,15 @@ export interface Users {
   role_id?: number;
   last_login?: string;
   last_update?: string;
-  user_entry: string;
-  date_time_entry: string;
-  user_update: string;
-  date_time_update: string;
+  created_by?: string;
+  created_at?: string;
+  updated_by?: string;
+  updated_at?: string;
+  address?: UserAddress[];
+  user_entry?: string;
+  date_time_entry?: string;
+  user_update?: string;
+  date_time_update?: string;
 }
 
 export interface UsersResponse {

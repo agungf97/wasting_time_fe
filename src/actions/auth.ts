@@ -21,7 +21,8 @@ export async function registerAction(payload: RegisterPayload) {
     return { error };
   }
 
-  redirect("/login");
+  const email = encodeURIComponent(payload.email ?? "");
+  redirect(`/verify-email?email=${email}`);
 }
 
 export async function loginAction(

@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { useState, useMemo, useEffect, useRef } from "react";
-import { Search, XIcon } from "lucide-react";
+import { Eye, Search, XIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TableHeadFilter } from "@/components/table-head-filter";
@@ -15,6 +15,7 @@ import TablePagination from "@/components/custom-pagination";
 import { Users } from "@/lib/interface/user";
 import { useDebounce } from "@/hooks/use-debounce";
 import { getCustomerAction } from "@/actions/customer";
+import { useRouter } from "next/navigation";
 
 interface CustomerTableProps {
   initialData: Users[];
@@ -28,6 +29,7 @@ export default function CustomerTable({ initialData }: CustomerTableProps) {
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
+    const router = useRouter();
 
     const [sortConfig, setSortConfig] = useState<{
         field: keyof Users | null;
@@ -197,6 +199,7 @@ export default function CustomerTable({ initialData }: CustomerTableProps) {
                                 onSort={handleSort('phone_number')} />
                             <TableHead>Last Update</TableHead>
                             <TableHead>Last Login</TableHead>
+                            <TableHead>Action</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -255,6 +258,15 @@ export default function CustomerTable({ initialData }: CustomerTableProps) {
                                             })
                                             : '-'
                                         }
+                                    </TableCell>
+                                    <TableCell>
+                                        <Button
+                                            variant="eye"
+                                            onClick={() => router.push(`/customer/${encodeURIComponent(user.id)}`)}
+                                            className="text-primary underline-offset-4 hover:underline cursor-pointer font-medium border-2 shadow"
+                                        >
+                                            <Eye className="w-4 h-4" />
+                                        </Button>
                                     </TableCell>
                                 </TableRow>
                             ))

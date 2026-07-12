@@ -15,11 +15,14 @@ import Image from "next/image";
 import { loginAction } from "@/actions/auth";
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const searchParams = useSearchParams();
+  const showVerifiedMessage = searchParams.get("verified") === "1";
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -57,6 +60,14 @@ export function LoginForm({
                 </p>
               </div>
 
+              {showVerifiedMessage && (
+                <div className="rounded-lg bg-green-50 border border-green-200 px-4 py-3 dark:bg-green-900/20 dark:border-green-800">
+                  <p className="text-sm text-green-700 dark:text-green-300 text-center">
+                    Verifikasi email berhasil. Silakan login.
+                  </p>
+                </div>
+              )}
+
               {/* Error Message */}
               {error && (
                 <div className="rounded-lg bg-destructive/10 border border-destructive/20 px-4 py-3">
@@ -83,6 +94,7 @@ export function LoginForm({
                   <FieldLabel htmlFor="password">Password</FieldLabel>
                   <Link
                     href="/reset-password"
+                    tabIndex={-1}
                     className="ml-auto text-xs underline-offset-2 hover:underline"
                   >
                     Lupa password?
