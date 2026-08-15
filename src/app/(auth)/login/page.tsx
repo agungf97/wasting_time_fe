@@ -20,7 +20,7 @@ export default async function LoginPage() {
                 priority
                 style={{ width: "64px", height: "auto" }}
               />
-              <div className="text-[8px] font-bold">PT. PESTA PORA ABADI</div>
+              <div className="text-[8px] font-bold">Wasting Time Admin</div>
             </div>
           </Link>
           <nav className="ml-auto flex items-center gap-2">

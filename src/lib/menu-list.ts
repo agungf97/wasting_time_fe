@@ -63,5 +63,25 @@ export function useMenuList(pathname: string, role?: string): Group[] {
         },
       ],
     },
+    {
+      groupLabel: "Katalog",
+      show: isInternal,
+      menus: [
+        {
+          href: "/product",
+          label: "Product",
+          active: pathname.includes("/product"),
+          icon: "/sidebar-icons/products.png",
+          submenus: [],
+        },
+        {
+          href: "/voucher",
+          label: "Voucher",
+          active: pathname.includes("/voucher"),
+          icon: "/sidebar-icons/coupon.png",
+          submenus: [],
+        },
+      ],
+    },
   ];
 }
